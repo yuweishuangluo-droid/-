@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>妖怪ウォッチ1 個体値判定</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#1d2329;background:#f4f6f8}
+*{box-sizing:border-box} body{margin:0} main{max-width:880px;margin:auto;padding:18px}
+h1{font-size:23px;margin:6px 0 4px}.sub{color:#66707a;font-size:13px;margin-bottom:16px}
+.card{background:white;border:1px solid #e3e7eb;border-radius:15px;padding:16px;margin:12px 0;box-shadow:0 2px 9px #0000000c}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+label{display:block;font-size:12px;color:#5b6570;margin-bottom:5px}
+input,select,button{width:100%;min-height:44px;border-radius:10px;border:1px solid #cfd5db;background:#fff;padding:9px 10px;font-size:16px}
+button{border:0;background:#20262d;color:#fff;font-weight:700;margin-top:14px;cursor:pointer}
+button:active{transform:translateY(1px)}
+.result{line-height:1.65}.good{font-weight:700}.warn{font-weight:700;color:#9b5700}
+.candidate{padding:10px 0;border-top:1px solid #edf0f2}.candidate:first-of-type{border-top:0}
+.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;overflow-wrap:anywhere}
+.note{font-size:12px;color:#69737d}.pill{display:inline-block;padding:2px 7px;border-radius:999px;background:#eef1f4;margin-right:5px}
+details{margin-top:8px}
+@media(max-width:650px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body><main>
+<h1>妖怪ウォッチ1 個体値判定</h1>
+<div class="sub">calc.js 準拠の正算エンジン＋逆算ツール（試作版）</div>
+
+<section class="card">
+<div class="grid">
+<div><label>妖怪</label><select id="yokai"></select></div>
+<div><label>Lv</label><input id="level" type="number" min="1" max="99" value="99"></div>
+<div><label>性格</label><select id="nature"></select></div>
+<div><label>入手方法</label><select id="method"><option value="base">野良・ガシャ・報酬</option><option value="evo">進化・合成</option></select></div>
+</div>
+</section>
+
+<section class="card">
+<strong>実測ステータス</strong>
+<div class="stats" style="margin-top:10px">
+<div><label>HP</label><input id="H" type="number" inputmode="numeric"></div>
+<div><label>力</label><input id="A" type="number" inputmode="numeric"></div>
+<div><label>妖力</label><input id="M" type="number" inputmode="numeric"></div>
+<div><label>守り</label><input id="D" type="number" inputmode="numeric"></div>
+<div><label>素早さ</label><input id="S" type="number" inputmode="numeric"></div>
+</div>
+<details><summary>B2探索設定（進化・合成のみ）</summary>
+<div style="margin-top:10px"><label>B2の1能力あたり探索上限</label><input id="b2max" type="number" min="0" max="99" value="15"></div>
+<div class="note">B2は「各0～3」「合計15」と固定していません。現在は0～指定上限を各能力ごとに探索します。</div>
+</details>
+<button id="judge">個体値を判定</button>
+</section>
+
+<section class="card result" id="result">5つの実測値を入力してください。</section>
+
+<section class="card note">
+<b>現段階の扱い</b><br>
+B1は合計10で候補を絞ります。B2は野良・ガシャ・報酬なら0、進化・合成なら累積値として探索します。
+個体値Aについては、calc.jsから確定できる「種族ごとに入力可能な能力」のみ制限し、値そのもののゲーム内合法範囲はまだ決め打ちしていません。
+そのため表示は「calc.jsと実測値に一致する候補」です。Aの正式な合法条件が確定したら、そこを追加して候補をさらに絞れます。
+</section>
+
+<script src="data.js"></script>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const STATUS=["H","A","M","D","S"];
+const CLASS_NAMES=["ボス","イサマシ","フシギ","ゴーケツ","プリチー","ポカポカ","ウスラカゲ","ブキミー","ニョロロン"];
+const A_ALLOWED=[
+ [false,false,false,false,false],
+ [false,true,false,false,false],
+ [false,false,true,false,false],
+ [false,false,false,true,false],
+ [false,false,false,false,true],
+ [false,false,true,true,false],
+ [true,false,false,false,true],
+ [false,true,true,false,false],
+ [true,false,false,false,false]
+];
+const NATURES=[
+ ["なし",[0,0,0,0,0]],["短気",[10,10,0,0,0]],["荒くれ",[0,20,0,0,0]],
+ ["れいせい",[0,0,10,0,10]],["ずのう的",[0,0,20,0,0]],["しんちょう",[0,0,10,10,0]],
+ ["動じない",[0,0,0,20,0]],["やさしい",[10,0,10,0,0]],["情け深い",[20,0,0,0,0]],
+ ["いやらしい",[0,10,0,0,10]],["非道",[0,0,0,0,20]],["協力的",[10,0,0,0,10]],["けんしん的",[0,10,0,10,0]]
+];
+
+for(const d of YOKAI_DATA){
+ const o=document.createElement("option"); o.value=d.num; o.textContent=d.name; $("yokai").appendChild(o);
+}
+for(let i=0;i<NATURES.length;i++){
+ const o=document.createElement("option"); o.value=i; o.textContent=NATURES[i][0]; $("nature").appendChild(o);
+}
+$("yokai").value="76"; $("nature").value="1";
+$("H").value=374; $("A").value=195; $("M").value=106; $("D").value=191; $("S").value=121;
+
+const f32=Math.fround;
+// Mirror Float32Array semantics: arithmetic is JS Number; each array-element assignment rounds to float32.
+function calcStatus(growPattern,bs,ivA,ivB1,ivB2,cb,level,isHP){
+ const F=[];
+ F[0]=f32(1.0); F[1]=f32(9604.0); F[2]=f32(0.449999988079071044921875);
+ F[3]=f32(0.25); F[4]=f32(0.010204081423580646514892578125); F[5]=f32(98.0);
+ F[6]=f32(0.100000001490116119384765625); F[7]=f32(99.0); F[8]=f32(0.5);
+ F[9]=f32(0.0050505050458014011383056640625); F[10]=f32(0.0500000007450580596923828125);
+ F[11]=f32(level);
+ F[11]=f32(F[11]*F[9]);
+ F[11]=f32(F[11]+F[0]);
+ F[11]=f32(F[11]*cb);
+ F[23]=f32(F[11]);
+ F[11]=f32(bs+ivA+ivB1);
+ if(isHP) F[23]=f32(F[23]+F[11]); else F[23]=f32(F[23]+bs*F[6]);
+ F[11]=f32(F[11]+ivB2);
+ if(isHP) F[11]=f32(F[11]*F[6]); else F[11]=f32(F[11]*F[10]);
+
+ if(growPattern===0){
+   F[11]=f32(F[11]*level); F[23]=f32(F[23]+F[11]);
+ }else if(growPattern===1){
+   F[12]=f32(level-F[0]); F[12]=f32(F[5]-F[12]);
+   F[13]=f32(F[7]-(F[12]*F[12]*F[12]*F[8]/F[1]+F[12]*F[12]*F[3]*F[4]+F[12]*F[3]));
+   F[11]=f32(F[11]*F[13]); F[23]=f32(F[23]+F[11]);
+ }else if(growPattern===2){
+   F[12]=f32(level-F[0]); F[12]=f32(F[5]-F[12]);
+   F[13]=f32(F[7]-(F[12]*F[12]*F[12]*F[6]/F[1]+F[12]*F[12]*F[2]*F[4]+F[12]*F[2]));
+   F[11]=f32(F[11]*F[13]); F[23]=f32(F[23]+F[11]);
+ }else if(growPattern===3){
+   F[12]=f32(level-F[0]);
+   F[13]=f32(F[0]+(F[12]*F[12]*F[12]*F[6]/F[1]+F[12]*F[12]*F[2]*F[4]+F[12]*F[2]));
+   F[11]=f32(F[11]*F[13]); F[23]=f32(F[23]+F[11]);
+ }else if(growPattern===4){
+   F[12]=f32(level-F[0]);
+   F[13]=f32(F[0]+(F[12]*F[12]*F[12]*F[8]/F[1]+F[12]*F[12]*F[3]*F[4]+F[12]*F[3]));
+   F[11]=f32(F[11]*F[13]); F[23]=f32(F[23]+F[11]);
+ }else if(growPattern===5){
+   F[23]=f32(bs);
+ }else return 0;
+ return Math.floor(F[23]);
+}
+
+// Per-stat candidate generation prevents a huge 5D brute-force.
+function statCandidates(d,i,target,cb,lv,b2max,baseOnly){
+ const arr=[];
+ const aVals=A_ALLOWED[d.class][i]?Array.from({length:100},(_,x)=>x):[0];
+ const b2Vals=baseOnly?[0]:Array.from({length:b2max+1},(_,x)=>x);
+ for(const a of aVals) for(let b1=0;b1<=10;b1++) for(const b2 of b2Vals){
+   if(calcStatus(d.growPat[i],d.bs[i],a,b1,b2,cb,lv,i===0)===target) arr.push({a,b1,b2});
+ }
+ return arr;
+}
+
+function combine(perStat,limit=500){
+ const out=[], cur=Array(5);
+ function rec(i,sumB1){
+   if(out.length>=limit)return;
+   if(i===5){if(sumB1===10)out.push(cur.map(x=>({...x})));return}
+   for(const c of perStat[i]){
+     if(sumB1+c.b1>10)continue;
+     cur[i]=c; rec(i+1,sumB1+c.b1);
+     if(out.length>=limit)return;
+   }
+ }
+ rec(0,0); return out;
+}
+
+$("judge").addEventListener("click",()=>{
+ const d=YOKAI_DATA.find(x=>x.num===Number($("yokai").value));
+ const lv=Number($("level").value), targets=STATUS.map(s=>Number($(s).value));
+ const cb=NATURES[Number($("nature").value)][1];
+ const baseOnly=$("method").value==="base";
+ const b2max=Math.max(0,Math.min(99,Number($("b2max").value)||0));
+ const res=$("result");
+ if(!d || !Number.isInteger(lv) || lv<1 || lv>99 || targets.some(x=>!Number.isFinite(x))){
+   res.innerHTML='<span class="warn">妖怪・Lv・5つの実測値を確認してください。</span>'; return;
+ }
+ const per=targets.map((t,i)=>statCandidates(d,i,t,cb[i],lv,b2max,baseOnly));
+ if(per.some(x=>x.length===0)){
+   res.innerHTML=`<b>${d.name} / Lv${lv}</b><br><span class="warn">一致候補なし</span><br><span class="note">現在の条件では、少なくとも1能力に一致するA/B1/B2候補がありません。</span>`;
+   return;
+ }
+ const matches=combine(per,500);
+ let h=`<b>${d.name} / Lv${lv}</b> <span class="pill">${CLASS_NAMES[d.class]}</span><br>`;
+ if(!matches.length){
+   h+=`<span class="warn">B1合計10を満たす一致候補はありません。</span>`;
+ }else{
+   h+=`<span class="good">${matches.length}${matches.length>=500?"以上":""}候補</span>`;
+   h+=`<div class="note">表示は最大500候補。Aのゲーム内合法条件は未確定のため、calc.js互換候補として表示しています。</div>`;
+   matches.slice(0,100).forEach((m,k)=>{
+     h+=`<div class="candidate"><b>候補 ${k+1}</b><br>`;
+     h+=`<span class="code">A&nbsp;&nbsp;=[${m.map(x=>x.a).join(", ")}]<br>`;
+     h+=`B1 =[${m.map(x=>x.b1).join(", ")}]<br>`;
+     h+=`B2 =[${m.map(x=>x.b2).join(", ")}]</span></div>`;
+   });
+ }
+ res.innerHTML=h;
+});
+</script>
+</main></body></html>

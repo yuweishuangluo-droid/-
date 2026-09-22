@@ -1,4 +1,4 @@
- <!doctype html>
+<!doctype html>
 <html lang="ja">
 <head>
 <meta charset="utf-8">
@@ -82,7 +82,6 @@ button:active{transform:translateY(1px)}
   padding:12px 0;
   border-top:1px solid #edf0f2
 }
-.candidate:first-of-type{border-top:0}
 
 .code{
   font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -127,8 +126,8 @@ button:active{transform:translateY(1px)}
 
 .checkline input{
   width:20px;
-  min-height:20px;
   height:20px;
+  min-height:20px;
   flex:0 0 auto;
   margin-top:1px
 }
@@ -139,19 +138,41 @@ button:active{transform:translateY(1px)}
   margin:0
 }
 
-details{
-  margin-top:12px
-}
-
-summary{
-  cursor:pointer;
-  font-weight:600
-}
+details{margin-top:12px}
+summary{cursor:pointer;font-weight:600}
 
 hr{
   border:0;
-  border-top:1px solid #edf0f2;
+  border-top:1px solid #e3e7eb;
   margin:14px 0
+}
+
+.stat-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+  text-align:center;
+  margin-top:10px
+}
+
+.stat-table th,
+.stat-table td{
+  padding:8px 4px;
+  border-top:1px solid #e4e7ea
+}
+
+.stat-table thead th{
+  border-top:0;
+  color:#5b6570
+}
+
+.stat-table td:first-child{
+  text-align:left;
+  white-space:nowrap
+}
+
+.fixed{
+  font-weight:700
 }
 
 @media(max-width:650px){
@@ -169,6 +190,7 @@ hr{
 calc.js準拠 正算エンジン＋個体値逆算ツール
 </div>
 
+
 <section class="card">
 
 <div class="grid">
@@ -179,7 +201,7 @@ calc.js準拠 正算エンジン＋個体値逆算ツール
 <input
   id="yokaiSearch"
   type="search"
-  placeholder="名前を入力（例：しわくちゃん）"
+  placeholder="名前を入力（例：くさなぎ）"
   autocomplete="off"
   list="yokaiNames"
 >
@@ -193,8 +215,10 @@ calc.js準拠 正算エンジン＋個体値逆算ツール
 </div>
 </div>
 
+
 <div>
 <label>Lv</label>
+
 <input
   id="level"
   type="number"
@@ -205,14 +229,17 @@ calc.js準拠 正算エンジン＋個体値逆算ツール
 >
 </div>
 
+
 <div>
 <label>性格補正</label>
 
 <select id="nature"></select>
 
 <div class="note" style="margin-top:5px">
-プリセットはcalc.jsの補正値です。実際に蓄積した補正が分かる場合は「手動入力」を使用してください。
+プリセットはcalc.jsの補正値です。
+実際に蓄積した補正が分かる場合は「手動入力」を使用してください。
 </div>
+
 
 <div id="manualCb" class="subbox hidden">
 
@@ -251,20 +278,17 @@ calc.js準拠 正算エンジン＋個体値逆算ツール
 </div>
 </div>
 
+
 <div>
 <label>入手・個体の状態</label>
 
 <select id="method">
-<option value="base">
-未進化・B2なし
-</option>
-<option value="evo">
-進化・合成など（B2あり）
-</option>
+<option value="base">未進化・B2なし</option>
+<option value="evo">進化・合成など（B2あり）</option>
 </select>
 
 <div class="note" style="margin-top:5px">
-B2の正確な生成規則は未確定のため、進化・合成では探索範囲を手動設定します。
+B2の正確な生成・継承規則は検証中です。
 </div>
 </div>
 
@@ -315,28 +339,32 @@ B2の正確な生成規則は未確定のため、進化・合成では探索範
 
 <div class="checkline">
 <input id="legalA" type="checkbox" checked>
+
 <label for="legalA">
 暫定A合法フィルターを使用する
 </label>
 </div>
 
-<div class="note" style="margin-top:6px">
-現在の暫定ルール：
+<div class="note" style="margin-top:7px">
+暫定ルール：
 A対象が1能力なら0～8、
 A対象が2能力なら各0～4。
-この条件はcalc.js自体には含まれないため、検証用にOFFにもできます。
+この条件はcalc.js自体には含まれないため、
+検証用にOFFにもできます。
 </div>
 
 <hr>
 
 <div class="checkline">
 <input id="fixA" type="checkbox">
+
 <label for="fixA">
 Aを固定して探索する
 </label>
 </div>
 
-<div id="fixedABox" class="hidden" style="margin-top:10px">
+
+<div id="fixedABox" class="hidden" style="margin-top:12px">
 
 <div class="stats">
 
@@ -372,6 +400,7 @@ Aを固定して探索する
 </div>
 
 </div>
+
 </div>
 </details>
 
@@ -389,12 +418,14 @@ Aを固定して探索する
   inputmode="numeric"
   min="0"
   max="99"
-  value="15"
+  value="3"
 >
 
 <div class="note" style="margin-top:7px">
-B2の生成・継承規則はまだ確定扱いにしていません。
-未進化ではB2=0固定、進化・合成では0～指定値を各能力について探索します。
+未進化ではB2=0固定。
+進化・合成では0～指定値を各能力について探索します。
+現在の「3」は検証用の初期値であり、
+B2の正式なゲーム内上限として確定したものではありません。
 </div>
 
 </div>
@@ -420,13 +451,14 @@ B2の生成・継承規則はまだ確定扱いにしていません。
 B1は5能力の合計が10になる候補を探索します。<br>
 
 B2は未進化個体では0固定です。
-進化・合成個体では指定範囲から探索します。<br><br>
+進化・合成個体では指定した範囲から探索します。<br><br>
 
-Aについてはcalc.jsから確認できる種族別の対象能力制限に加え、
-現在検証中の合法範囲を任意で適用できます。<br><br>
+Aはcalc.jsで確認できる種族別の対象能力制限を適用します。
+さらに、任意で暫定A合法フィルターを適用できます。<br><br>
 
-「暫定A合法フィルター」はcalc.js由来の条件ではありません。
-今後の実測検証によって変更する可能性があります。
+候補が500件以下の場合は、
+残った全候補からA・B1・B2それぞれの範囲と
+合計値の範囲を自動集計します。
 
 </section>
 
@@ -439,6 +471,14 @@ Aについてはcalc.jsから確認できる種族別の対象能力制限に加
 const $=id=>document.getElementById(id);
 
 const STATUS=["H","A","M","D","S"];
+
+const STATUS_LABELS=[
+  "HP",
+  "ちから",
+  "ようりょく",
+  "まもり",
+  "すばやさ"
+];
 
 const CLASS_NAMES=[
   "ボス",
@@ -482,9 +522,9 @@ const NATURES=[
 ];
 
 
-/* -------------------------
+/* =========================
    初期UI
-------------------------- */
+========================= */
 
 for(const d of YOKAI_DATA){
 
@@ -508,28 +548,31 @@ for(let i=0;i<NATURES.length;i++){
 
 }
 
-
-/* 最初の妖怪 */
-
 if(YOKAI_DATA.length){
 
-  $("yokai").value=String(YOKAI_DATA[0].num);
-  $("yokaiSearch").value=YOKAI_DATA[0].name;
+  $("yokai").value=
+    String(YOKAI_DATA[0].num);
+
+  $("yokaiSearch").value=
+    YOKAI_DATA[0].name;
 
 }
 
 $("nature").value="0";
 
 
-/* -------------------------
+/* =========================
    妖怪検索
-------------------------- */
+========================= */
 
 function syncYokaiSearch(){
 
-  const d=YOKAI_DATA.find(
-    x=>x.num===Number($("yokai").value)
-  );
+  const d=
+    YOKAI_DATA.find(
+      x=>
+        x.num===
+        Number($("yokai").value)
+    );
 
   if(d){
     $("yokaiSearch").value=d.name;
@@ -546,40 +589,48 @@ $("yokaiSearch").addEventListener(
   "input",
   ()=>{
 
-    const q=$("yokaiSearch").value.trim();
+    const q=
+      $("yokaiSearch").value.trim();
 
     if(!q)return;
 
-    const exact=YOKAI_DATA.find(
-      d=>
-        d.name===q ||
-        d.furigana===q
-    );
+    const exact=
+      YOKAI_DATA.find(
+        d=>
+          d.name===q ||
+          d.furigana===q
+      );
 
     if(exact){
 
-      $("yokai").value=String(exact.num);
+      $("yokai").value=
+        String(exact.num);
+
       return;
 
     }
 
-    const hit=YOKAI_DATA.find(
-      d=>
-        d.name.includes(q) ||
-        (d.furigana||"").includes(q)
-    );
+    const hit=
+      YOKAI_DATA.find(
+        d=>
+          d.name.includes(q) ||
+          (d.furigana||"").includes(q)
+      );
 
     if(hit){
-      $("yokai").value=String(hit.num);
+
+      $("yokai").value=
+        String(hit.num);
+
     }
 
   }
 );
 
 
-/* -------------------------
+/* =========================
    UI切替
-------------------------- */
+========================= */
 
 function updateNatureUI(){
 
@@ -638,9 +689,9 @@ updateFixedAUI();
 updateMethodUI();
 
 
-/* -------------------------
+/* =========================
    calc.js互換計算
-------------------------- */
+========================= */
 
 const f32=Math.fround;
 
@@ -834,9 +885,9 @@ function calcStatus(
 }
 
 
-/* -------------------------
-   A候補生成
-------------------------- */
+/* =========================
+   A候補
+========================= */
 
 function getAValues(
   d,
@@ -846,19 +897,16 @@ function getAValues(
 ){
 
   if(fixedA!==null){
+
     return [fixedA];
+
   }
 
   if(!A_ALLOWED[d.class][statIndex]){
+
     return [0];
+
   }
-
-  /*
-    calc.jsそのものは0～99入力可能。
-
-    合法フィルターONの場合のみ
-    現在検証中のルールを適用。
-  */
 
   if(!useLegalA){
 
@@ -887,9 +935,9 @@ function getAValues(
 }
 
 
-/* -------------------------
-   1能力ごとの候補
-------------------------- */
+/* =========================
+   1能力候補
+========================= */
 
 function statCandidates(
   d,
@@ -922,11 +970,6 @@ function statCandidates(
         );
 
   for(const a of aVals){
-
-    /*
-      A対象外の能力を固定入力した場合は
-      ゲーム上ありえないので候補なし。
-    */
 
     if(
       !A_ALLOWED[d.class][i] &&
@@ -971,9 +1014,9 @@ function statCandidates(
 }
 
 
-/* -------------------------
-   5能力結合
-------------------------- */
+/* =========================
+   5能力を結合
+========================= */
 
 function combine(
   perStat,
@@ -1037,9 +1080,160 @@ function combine(
 }
 
 
-/* -------------------------
+/* =========================
+   候補統計
+========================= */
+
+function candidateStats(matches){
+
+  if(!matches.length){
+    return "";
+  }
+
+  function rangeOf(
+    key,
+    i
+  ){
+
+    const vals=
+      matches.map(
+        m=>m[i][key]
+      );
+
+    const min=
+      Math.min(...vals);
+
+    const max=
+      Math.max(...vals);
+
+    return min===max
+      ? `<span class="fixed">${min}</span>`
+      : `${min}～${max}`;
+
+  }
+
+
+  function totalRange(key){
+
+    const totals=
+      matches.map(
+        m=>
+          m.reduce(
+            (sum,x)=>
+              sum+x[key],
+            0
+          )
+      );
+
+    const min=
+      Math.min(...totals);
+
+    const max=
+      Math.max(...totals);
+
+    return min===max
+      ? `<span class="fixed">${min}</span>`
+      : `${min}～${max}`;
+
+  }
+
+
+  let h=`
+
+  <div class="subbox">
+
+    <div class="section-title">
+      候補から分かる範囲
+    </div>
+
+    <div class="note">
+      現在残っている全候補を比較しています。
+      1つの数字だけ表示される項目は、
+      全候補でその値が共通です。
+    </div>
+
+    <div style="overflow-x:auto">
+
+    <table class="stat-table">
+
+      <thead>
+        <tr>
+          <th></th>
+          <th>A</th>
+          <th>B1</th>
+          <th>B2</th>
+        </tr>
+      </thead>
+
+      <tbody>
+  `;
+
+
+  for(let i=0;i<5;i++){
+
+    h+=`
+
+      <tr>
+
+        <td>
+          ${STATUS_LABELS[i]}
+        </td>
+
+        <td>
+          ${rangeOf("a",i)}
+        </td>
+
+        <td>
+          ${rangeOf("b1",i)}
+        </td>
+
+        <td>
+          ${rangeOf("b2",i)}
+        </td>
+
+      </tr>
+
+    `;
+
+  }
+
+
+  h+=`
+
+      </tbody>
+
+    </table>
+
+    </div>
+
+    <hr>
+
+    <div class="code">
+
+      A合計&nbsp;&nbsp;：
+      ${totalRange("a")}
+      <br>
+
+      B1合計 ：
+      ${totalRange("b1")}
+      <br>
+
+      B2合計 ：
+      ${totalRange("b2")}
+
+    </div>
+
+  </div>
+
+  `;
+
+  return h;
+}
+
+
+/* =========================
    判定
-------------------------- */
+========================= */
 
 $("judge").addEventListener(
   "click",
@@ -1052,25 +1246,31 @@ $("judge").addEventListener(
           Number($("yokai").value)
       );
 
+
     const lv=
       Number(
         $("level").value
       );
 
+
     const targets=
       STATUS.map(
-        s=>Number($(s).value)
+        s=>
+          Number($(s).value)
       );
+
 
     const natureIndex=
       Number(
         $("nature").value
       );
 
+
     const preset=
       NATURES[
         natureIndex
       ][1];
+
 
     const cb=
       preset ??
@@ -1081,8 +1281,10 @@ $("judge").addEventListener(
           )||0
       );
 
+
     const baseOnly=
       $("method").value==="base";
+
 
     const b2max=
       baseOnly
@@ -1097,11 +1299,14 @@ $("judge").addEventListener(
             )
           );
 
+
     const useLegalA=
       $("legalA").checked;
 
+
     const useFixedA=
       $("fixA").checked;
+
 
     const fixedA=
       useFixedA
@@ -1112,6 +1317,7 @@ $("judge").addEventListener(
               )||0
           )
         : null;
+
 
     const res=
       $("result");
@@ -1132,16 +1338,16 @@ $("judge").addEventListener(
     ){
 
       res.innerHTML=
-        '<span class="warn">妖怪・Lv・5つの実測値を確認してください。</span>';
+        `<span class="warn">
+        妖怪・Lv・5つの実測値を確認してください。
+        </span>`;
 
       return;
 
     }
 
 
-    /*
-      A固定値の簡易チェック
-    */
+    /* A固定チェック */
 
     if(useFixedA){
 
@@ -1154,7 +1360,9 @@ $("judge").addEventListener(
 
           res.innerHTML=
             `<span class="warn">
-            ${d.name}では${STATUS[i]}にAを設定できません。
+            ${d.name}では
+            ${STATUS_LABELS[i]}
+            にAを設定できません。
             </span>`;
 
           return;
@@ -1166,7 +1374,7 @@ $("judge").addEventListener(
     }
 
 
-    /* 各能力候補 */
+    /* 各能力の候補 */
 
     const per=
       targets.map(
@@ -1194,10 +1402,18 @@ $("judge").addEventListener(
     ){
 
       res.innerHTML=
-        `<b>${d.name} / Lv${lv}</b><br>
+
+        `<b>
+        ${d.name} / Lv${lv}
+        </b>
+        <br>
+
         <span class="warn">
         一致候補なし
-        </span><br>
+        </span>
+
+        <br>
+
         <span class="note">
         現在のA・B1・B2・性格補正条件では、
         少なくとも1能力に一致する候補がありません。
@@ -1209,9 +1425,8 @@ $("judge").addEventListener(
 
 
     /*
-      501件取得することで
-      「500件ちょうど」と
-      「500件超」を区別する。
+      501件取得して
+      500件超か判定
     */
 
     const matches=
@@ -1220,8 +1435,10 @@ $("judge").addEventListener(
         501
       );
 
+
     const over500=
       matches.length>500;
+
 
     const shownMatches=
       matches.slice(
@@ -1231,15 +1448,23 @@ $("judge").addEventListener(
 
 
     let h=
-      `<b>${d.name} / Lv${lv}</b>
+
+      `<b>
+      ${d.name} / Lv${lv}
+      </b>
+
       <span class="pill">
       ${CLASS_NAMES[d.class]}
+      </span>
+
+      <span class="pill">
+      ${
+        baseOnly
+          ?"B2 0固定"
+          :"B2 0～"+b2max
+      }
       </span>`;
 
-    h+=
-      `<span class="pill">
-      B2 ${baseOnly?"0固定":"0～"+b2max}
-      </span>`;
 
     if(useLegalA){
 
@@ -1250,6 +1475,7 @@ $("judge").addEventListener(
 
     }
 
+
     if(useFixedA){
 
       h+=
@@ -1259,23 +1485,27 @@ $("judge").addEventListener(
 
     }
 
+
     h+="<br>";
 
 
     if(!shownMatches.length){
 
       h+=
+
         `<span class="warn">
         B1合計10を満たす一致候補はありません。
         </span>`;
 
       res.innerHTML=h;
+
       return;
 
     }
 
 
     h+=
+
       `<span class="good">
       ${
         over500
@@ -1288,24 +1518,39 @@ $("judge").addEventListener(
     if(over500){
 
       h+=
+
         `<div class="note">
         候補が500件を超えています。
         条件を追加すると絞り込みやすくなります。
+        </div>
+
+        <div class="subbox note">
+        すべての候補を取得できていないため、
+        候補統計は表示していません。
+        500件以下になると自動表示されます。
         </div>`;
 
     }else{
 
       h+=
+
         `<div class="note">
         現在の条件をすべて満たす候補です。
         </div>`;
+
+      /*
+        全候補を使って統計
+      */
+
+      h+=candidateStats(
+        shownMatches
+      );
 
     }
 
 
     /*
-      画面が重くなりすぎないよう
-      実際の表示は先頭100件。
+      候補詳細は100件まで表示
     */
 
     shownMatches
@@ -1328,11 +1573,13 @@ $("judge").addEventListener(
               x=>x.b2
             );
 
+
           const sumA=
             avec.reduce(
               (a,b)=>a+b,
               0
             );
+
 
           const sumB1=
             b1vec.reduce(
@@ -1340,30 +1587,45 @@ $("judge").addEventListener(
               0
             );
 
+
           const sumB2=
             b2vec.reduce(
               (a,b)=>a+b,
               0
             );
 
+
           h+=
+
             `<div class="candidate">
 
-            <b>候補 ${k+1}</b>
+            <b>
+            候補 ${k+1}
+            </b>
 
             <br>
 
             <span class="code">
-            A&nbsp;&nbsp;=[${avec.join(", ")}]
+
+            A&nbsp;&nbsp;=[
+            ${avec.join(", ")}
+            ]
             &nbsp; 合計:${sumA}
+
             <br>
 
-            B1 =[${b1vec.join(", ")}]
+            B1 =[
+            ${b1vec.join(", ")}
+            ]
             &nbsp; 合計:${sumB1}
+
             <br>
 
-            B2 =[${b2vec.join(", ")}]
+            B2 =[
+            ${b2vec.join(", ")}
+            ]
             &nbsp; 合計:${sumB2}
+
             </span>
 
             </div>`;
@@ -1375,11 +1637,15 @@ $("judge").addEventListener(
     if(shownMatches.length>100){
 
       h+=
+
         `<div class="note">
-        画面表示は先頭100候補までです。
+        候補詳細の表示は先頭100件までです。
+        統計には500件以下の場合、
+        表示されていない候補も含めた全候補を使用しています。
         </div>`;
 
     }
+
 
     res.innerHTML=h;
 

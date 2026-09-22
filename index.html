@@ -211,6 +211,19 @@ hr{
   font-weight:700
 }
 
+.primary-result{
+  margin-top:12px;
+  padding:14px;
+  background:#f7f8fa;
+  border:2px solid #20262d;
+  border-radius:12px
+}
+
+.primary-result .code{
+  font-size:14px;
+  line-height:1.8
+}
+
 @media(max-width:650px){
 
   .grid{
@@ -854,8 +867,9 @@ Aはcalc.jsで確認できる種族別の対象能力制限を適用します。
 <br><br>
 
 候補が500件以下の場合は、
-残った全候補からA・B1・B2それぞれの範囲と
-合計値の範囲を自動集計します。
+未進化ではA・B1を主結果として表示します。
+進化・合成後ではA・B合計（B1+B2）を主結果として表示し、
+B1・B2は内訳候補として残します。
 
 </section>
 
@@ -1817,80 +1831,154 @@ function combine(
 ========================= */
 
 function candidateStats(
-  matches
+  matches,
+  baseOnly
 ){
 
   if(!matches.length){
-
     return "";
+  }
+
+
+  function valuesOf(
+    getter,
+    i
+  ){
+
+    return matches.map(
+      m=>getter(m,i)
+    );
 
   }
 
 
   function rangeOf(
-    key,
+    getter,
     i
   ){
 
-    const vals=
-      matches.map(
-        m=>m[i][key]
-      );
-
-
-    const min=
-      Math.min(...vals);
-
-
-    const max=
-      Math.max(...vals);
-
+    const vals=valuesOf(getter,i);
+    const min=Math.min(...vals);
+    const max=Math.max(...vals);
 
     return min===max
-
       ?`<span class="fixed">${min}</span>`
-
       :`${min}～${max}`;
+
+  }
+
+
+  function vectorRange(
+    getter
+  ){
+
+    return "["+
+      STATUS.map(
+        (_,i)=>{
+          const vals=valuesOf(getter,i);
+          const min=Math.min(...vals);
+          const max=Math.max(...vals);
+
+          return min===max
+            ?String(min)
+            :`${min}～${max}`;
+        }
+      ).join(", ")+
+    "]";
+
+  }
+
+
+  function vectorIsFixed(
+    getter
+  ){
+
+    return STATUS.every(
+      (_,i)=>{
+        const vals=valuesOf(getter,i);
+        return Math.min(...vals)===Math.max(...vals);
+      }
+    );
 
   }
 
 
   function totalRange(
-    key
+    getter
   ){
 
     const totals=
       matches.map(
-
         m=>
-
           m.reduce(
-            (sum,x)=>
-              sum+x[key],
+            (sum,x)=>sum+getter(x),
             0
           )
-
       );
 
-
-    const min=
-      Math.min(...totals);
-
-
-    const max=
-      Math.max(...totals);
-
+    const min=Math.min(...totals);
+    const max=Math.max(...totals);
 
     return min===max
-
       ?`<span class="fixed">${min}</span>`
-
       :`${min}～${max}`;
 
   }
 
 
+  const getA=(m,i)=>m[i].a;
+  const getB1=(m,i)=>m[i].b1;
+  const getB2=(m,i)=>m[i].b2;
+  const getBTotal=(m,i)=>m[i].b1+m[i].b2;
+
+  const aFixed=vectorIsFixed(getA);
+  const mainBGetter=baseOnly ? getB1 : getBTotal;
+  const mainBFixed=vectorIsFixed(mainBGetter);
+
+
   let h=`
+
+  <div class="primary-result">
+
+  <div class="section-title">
+  ${aFixed && mainBFixed ? "確定した個体値" : "個体値判定"}
+  </div>
+
+  <div class="code">
+
+  A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;：
+  <span class="${aFixed?"fixed":""}">
+  ${vectorRange(getA)}
+  </span>
+
+  <br>
+
+  ${
+    baseOnly
+      ?`B1&nbsp;&nbsp;&nbsp;&nbsp;：
+        <span class="${mainBFixed?"fixed":""}">
+        ${vectorRange(getB1)}
+        </span>`
+      :`B合計&nbsp;：
+        <span class="${mainBFixed?"fixed":""}">
+        ${vectorRange(getBTotal)}
+        </span>`
+  }
+
+  </div>
+
+  <div class="note" style="margin-top:7px">
+
+  ${
+    baseOnly
+      ?"未進化ではB2=0なので、B合計=B1です。"
+      :"B合計 = B1 + B2。B1とB2の内訳が違ってもB合計が同じなら、現在のcalc.js計算では同じステータスになります。"
+  }
+
+  </div>
+
+  </div>
+
 
   <div class="subbox">
 
@@ -1899,9 +1987,8 @@ function candidateStats(
   </div>
 
   <div class="note">
-  現在残っている全候補を比較しています。
   1つの数字だけ表示される項目は、
-  全候補でその値が共通です。
+  現在残っている全候補で共通です。
   </div>
 
   <div style="overflow-x:auto">
@@ -1914,8 +2001,8 @@ function candidateStats(
 
   <th></th>
   <th>A</th>
-  <th>B1</th>
-  <th>B2</th>
+  <th>${baseOnly?"B1":"B合計"}</th>
+  ${baseOnly?"":"<th>B1</th><th>B2</th>"}
 
   </tr>
 
@@ -1926,31 +2013,24 @@ function candidateStats(
   `;
 
 
-  for(
-    let i=0;
-    i<5;
-    i++
-  ){
+  for(let i=0;i<5;i++){
 
     h+=`
 
     <tr>
 
-    <td>
-    ${STATUS_LABELS[i]}
-    </td>
+    <td>${STATUS_LABELS[i]}</td>
 
-    <td>
-    ${rangeOf("a",i)}
-    </td>
+    <td>${rangeOf(getA,i)}</td>
 
-    <td>
-    ${rangeOf("b1",i)}
-    </td>
+    <td>${rangeOf(mainBGetter,i)}</td>
 
-    <td>
-    ${rangeOf("b2",i)}
-    </td>
+    ${
+      baseOnly
+        ?""
+        :`<td>${rangeOf(getB1,i)}</td>
+          <td>${rangeOf(getB2,i)}</td>`
+    }
 
     </tr>
 
@@ -1972,19 +2052,38 @@ function candidateStats(
   <div class="code">
 
   A合計&nbsp;&nbsp;：
-  ${totalRange("a")}
+  ${totalRange(x=>x.a)}
 
   <br>
 
-  B1合計 ：
-  ${totalRange("b1")}
+  ${
+    baseOnly
+      ?`B1合計 ：
+        ${totalRange(x=>x.b1)}`
+      :`B合計&nbsp;：
+        ${totalRange(x=>x.b1+x.b2)}
 
-  <br>
+        <br>
 
-  B2合計 ：
-  ${totalRange("b2")}
+        B1合計 ：
+        ${totalRange(x=>x.b1)}
+
+        <br>
+
+        B2合計 ：
+        ${totalRange(x=>x.b2)}`
+  }
 
   </div>
+
+  ${
+    baseOnly
+      ?""
+      :`<div class="note" style="margin-top:8px">
+        B1・B2は内訳候補として残しています。
+        進化前のB1が分かっている場合は「B1探索設定」で固定できます。
+        </div>`
+  }
 
   </div>
 
@@ -2493,7 +2592,8 @@ $("judge").addEventListener(
 
       h+=
         candidateStats(
-          shownMatches
+          shownMatches,
+          baseOnly
         );
 
     }
@@ -2551,6 +2651,19 @@ $("judge").addEventListener(
             );
 
 
+          const btotalvec=
+            m.map(
+              x=>x.b1+x.b2
+            );
+
+
+          const sumBTotal=
+            btotalvec.reduce(
+              (a,b)=>a+b,
+              0
+            );
+
+
           h+=
 
             `<div class="candidate">
@@ -2576,6 +2689,17 @@ $("judge").addEventListener(
             &nbsp; 合計:${sumB1}
 
             <br>
+
+            ${
+              baseOnly
+                ?""
+                :`B合計=[
+                  ${btotalvec.join(", ")}
+                  ]
+                  &nbsp; 合計:${sumBTotal}
+
+                  <br>`
+            }
 
             B2 =[
             ${b2vec.join(", ")}

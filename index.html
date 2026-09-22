@@ -11,12 +11,27 @@
   color:#1d2329;
   background:#f4f6f8
 }
-*{box-sizing:border-box}
-body{margin:0}
-main{max-width:880px;margin:auto;padding:18px}
 
-h1{font-size:23px;margin:6px 0 4px}
-.sub{color:#66707a;font-size:13px;margin-bottom:16px}
+*{box-sizing:border-box}
+
+body{margin:0}
+
+main{
+  max-width:880px;
+  margin:auto;
+  padding:18px
+}
+
+h1{
+  font-size:23px;
+  margin:6px 0 4px
+}
+
+.sub{
+  color:#66707a;
+  font-size:13px;
+  margin-bottom:16px
+}
 
 .card{
   background:#fff;
@@ -44,7 +59,9 @@ h1{font-size:23px;margin:6px 0 4px}
   max-width:calc(50% - 6px)
 }
 
-.hidden{display:none!important}
+.hidden{
+  display:none!important
+}
 
 label{
   display:block;
@@ -53,7 +70,9 @@ label{
   margin-bottom:5px
 }
 
-input,select,button{
+input,
+select,
+button{
   width:100%;
   min-height:44px;
   border-radius:10px;
@@ -72,11 +91,22 @@ button{
   cursor:pointer
 }
 
-button:active{transform:translateY(1px)}
+button:active{
+  transform:translateY(1px)
+}
 
-.result{line-height:1.65}
-.good{font-weight:700}
-.warn{font-weight:700;color:#9b5700}
+.result{
+  line-height:1.65
+}
+
+.good{
+  font-weight:700
+}
+
+.warn{
+  font-weight:700;
+  color:#9b5700
+}
 
 .candidate{
   padding:12px 0;
@@ -138,8 +168,14 @@ button:active{transform:translateY(1px)}
   margin:0
 }
 
-details{margin-top:12px}
-summary{cursor:pointer;font-weight:600}
+details{
+  margin-top:12px
+}
+
+summary{
+  cursor:pointer;
+  font-weight:600
+}
 
 hr{
   border:0;
@@ -176,47 +212,66 @@ hr{
 }
 
 @media(max-width:650px){
-  .grid{grid-template-columns:1fr}
-  .stats{grid-template-columns:repeat(2,1fr)}
+
+  .grid{
+    grid-template-columns:1fr
+  }
+
+  .stats{
+    grid-template-columns:repeat(2,1fr)
+  }
+
 }
 </style>
 </head>
 
 <body>
+
 <main>
 
 <h1>妖怪ウォッチ1 個体値判定</h1>
+
 <div class="sub">
 calc.js準拠 正算エンジン＋個体値逆算ツール
 </div>
 
+
+<!-- =========================
+     基本設定
+========================= -->
 
 <section class="card">
 
 <div class="grid">
 
 <div>
+
 <label>妖怪</label>
 
 <input
   id="yokaiSearch"
   type="search"
-  placeholder="名前を入力（例：くさなぎ）"
+  placeholder="名前を入力（例：でんじん）"
   autocomplete="off"
   list="yokaiNames"
 >
 
 <datalist id="yokaiNames"></datalist>
 
-<select id="yokai" style="margin-top:7px"></select>
+<select
+  id="yokai"
+  style="margin-top:7px"
+></select>
 
 <div class="note">
 名前検索、または一覧から選択できます。
 </div>
+
 </div>
 
 
 <div>
+
 <label>Lv</label>
 
 <input
@@ -227,21 +282,30 @@ calc.js準拠 正算エンジン＋個体値逆算ツール
   max="99"
   value="1"
 >
+
 </div>
 
 
 <div>
+
 <label>性格補正</label>
 
 <select id="nature"></select>
 
-<div class="note" style="margin-top:5px">
+<div
+  class="note"
+  style="margin-top:5px"
+>
 プリセットはcalc.jsの補正値です。
-実際に蓄積した補正が分かる場合は「手動入力」を使用してください。
+実際に蓄積した補正が分かる場合は
+「手動入力」を使用してください。
 </div>
 
 
-<div id="manualCb" class="subbox hidden">
+<div
+  id="manualCb"
+  class="subbox hidden"
+>
 
 <div class="section-title">
 累積した性格補正
@@ -251,50 +315,93 @@ calc.js準拠 正算エンジン＋個体値逆算ツール
 
 <div class="hp-stat">
 <label>HP補正</label>
-<input id="cbH" type="number" inputmode="numeric" value="0">
+<input
+  id="cbH"
+  type="number"
+  inputmode="numeric"
+  value="0"
+>
 </div>
 
 <div>
 <label>ちから補正</label>
-<input id="cbA" type="number" inputmode="numeric" value="0">
+<input
+  id="cbA"
+  type="number"
+  inputmode="numeric"
+  value="0"
+>
 </div>
 
 <div>
 <label>ようりょく補正</label>
-<input id="cbM" type="number" inputmode="numeric" value="0">
+<input
+  id="cbM"
+  type="number"
+  inputmode="numeric"
+  value="0"
+>
 </div>
 
 <div>
 <label>まもり補正</label>
-<input id="cbD" type="number" inputmode="numeric" value="0">
+<input
+  id="cbD"
+  type="number"
+  inputmode="numeric"
+  value="0"
+>
 </div>
 
 <div>
 <label>すばやさ補正</label>
-<input id="cbS" type="number" inputmode="numeric" value="0">
+<input
+  id="cbS"
+  type="number"
+  inputmode="numeric"
+  value="0"
+>
 </div>
 
 </div>
 </div>
+
 </div>
 
 
 <div>
+
 <label>入手・個体の状態</label>
 
 <select id="method">
-<option value="base">未進化・B2なし</option>
-<option value="evo">進化・合成など（B2あり）</option>
+
+<option value="base">
+未進化・B2なし
+</option>
+
+<option value="evo">
+進化・合成など（B2あり）
+</option>
+
 </select>
 
-<div class="note" style="margin-top:5px">
+<div
+  class="note"
+  style="margin-top:5px"
+>
 B2の正確な生成・継承規則は検証中です。
 </div>
+
 </div>
 
 </div>
+
 </section>
 
+
+<!-- =========================
+     実測値
+========================= -->
 
 <section class="card">
 
@@ -305,112 +412,378 @@ B2の正確な生成・継承規則は検証中です。
 <div class="stats">
 
 <div class="hp-stat">
+
 <label>HP</label>
-<input id="H" type="number" inputmode="numeric">
+
+<input
+  id="H"
+  type="number"
+  inputmode="numeric"
+>
+
 </div>
 
+
 <div>
+
 <label>ちから</label>
-<input id="A" type="number" inputmode="numeric">
+
+<input
+  id="A"
+  type="number"
+  inputmode="numeric"
+>
+
 </div>
 
+
 <div>
+
 <label>ようりょく</label>
-<input id="M" type="number" inputmode="numeric">
+
+<input
+  id="M"
+  type="number"
+  inputmode="numeric"
+>
+
 </div>
 
+
 <div>
+
 <label>まもり</label>
-<input id="D" type="number" inputmode="numeric">
+
+<input
+  id="D"
+  type="number"
+  inputmode="numeric"
+>
+
 </div>
+
 
 <div>
+
 <label>すばやさ</label>
-<input id="S" type="number" inputmode="numeric">
-</div>
+
+<input
+  id="S"
+  type="number"
+  inputmode="numeric"
+>
 
 </div>
 
+</div>
+
+
+<!-- =========================
+     A設定
+========================= -->
 
 <details>
-<summary>A探索設定</summary>
+
+<summary>
+A探索設定
+</summary>
 
 <div class="subbox">
 
+
 <div class="checkline">
-<input id="legalA" type="checkbox" checked>
+
+<input
+  id="legalA"
+  type="checkbox"
+  checked
+>
 
 <label for="legalA">
 暫定A合法フィルターを使用する
 </label>
+
 </div>
 
-<div class="note" style="margin-top:7px">
-暫定ルール：
+
+<div
+  class="note"
+  style="margin-top:7px"
+>
+現在の暫定ルール：
 A対象が1能力なら0～8、
 A対象が2能力なら各0～4。
 この条件はcalc.js自体には含まれないため、
 検証用にOFFにもできます。
 </div>
 
+
 <hr>
 
+
 <div class="checkline">
-<input id="fixA" type="checkbox">
+
+<input
+  id="fixA"
+  type="checkbox"
+>
 
 <label for="fixA">
 Aを固定して探索する
 </label>
+
 </div>
 
 
-<div id="fixedABox" class="hidden" style="margin-top:12px">
+<div
+  id="fixedABox"
+  class="hidden"
+  style="margin-top:12px"
+>
 
 <div class="stats">
 
+
 <div class="hp-stat">
+
 <label>HP A</label>
-<input id="fixAH" type="number" inputmode="numeric" value="0">
+
+<input
+  id="fixAH"
+  type="number"
+  inputmode="numeric"
+  min="0"
+  value="0"
+>
+
 </div>
 
+
 <div>
+
 <label>ちから A</label>
-<input id="fixAA" type="number" inputmode="numeric" value="0">
+
+<input
+  id="fixAA"
+  type="number"
+  inputmode="numeric"
+  min="0"
+  value="0"
+>
+
 </div>
 
+
 <div>
+
 <label>ようりょく A</label>
-<input id="fixAM" type="number" inputmode="numeric" value="0">
+
+<input
+  id="fixAM"
+  type="number"
+  inputmode="numeric"
+  min="0"
+  value="0"
+>
+
 </div>
 
+
 <div>
+
 <label>まもり A</label>
-<input id="fixAD" type="number" inputmode="numeric" value="0">
+
+<input
+  id="fixAD"
+  type="number"
+  inputmode="numeric"
+  min="0"
+  value="0"
+>
+
 </div>
+
 
 <div>
+
 <label>すばやさ A</label>
-<input id="fixAS" type="number" inputmode="numeric" value="0">
+
+<input
+  id="fixAS"
+  type="number"
+  inputmode="numeric"
+  min="0"
+  value="0"
+>
+
+</div>
+
+
+</div>
+
+
+<div
+  class="note"
+  style="margin-top:7px"
+>
+進化・合成前などからAが判明している場合に使用します。
 </div>
 
 </div>
 
-<div class="note" style="margin-top:7px">
-進化前などからAが判明している場合に使用します。
 </div>
 
-</div>
-
-</div>
 </details>
 
 
-<details id="b2Details">
-<summary>B2探索設定（進化・合成など）</summary>
+<!-- =========================
+     B1設定
+========================= -->
+
+<details>
+
+<summary>
+B1探索設定
+</summary>
 
 <div class="subbox">
 
-<label>B2の1能力あたり探索上限</label>
+
+<div class="checkline">
+
+<input
+  id="fixB1"
+  type="checkbox"
+>
+
+<label for="fixB1">
+B1を固定して探索する
+</label>
+
+</div>
+
+
+<div
+  id="fixedB1Box"
+  class="hidden"
+  style="margin-top:12px"
+>
+
+<div class="stats">
+
+
+<div class="hp-stat">
+
+<label>HP B1</label>
+
+<input
+  id="fixB1H"
+  type="number"
+  inputmode="numeric"
+  min="0"
+  max="10"
+  value="0"
+>
+
+</div>
+
+
+<div>
+
+<label>ちから B1</label>
+
+<input
+  id="fixB1A"
+  type="number"
+  inputmode="numeric"
+  min="0"
+  max="10"
+  value="0"
+>
+
+</div>
+
+
+<div>
+
+<label>ようりょく B1</label>
+
+<input
+  id="fixB1M"
+  type="number"
+  inputmode="numeric"
+  min="0"
+  max="10"
+  value="0"
+>
+
+</div>
+
+
+<div>
+
+<label>まもり B1</label>
+
+<input
+  id="fixB1D"
+  type="number"
+  inputmode="numeric"
+  min="0"
+  max="10"
+  value="0"
+>
+
+</div>
+
+
+<div>
+
+<label>すばやさ B1</label>
+
+<input
+  id="fixB1S"
+  type="number"
+  inputmode="numeric"
+  min="0"
+  max="10"
+  value="0"
+>
+
+</div>
+
+</div>
+
+
+<div
+  class="note"
+  style="margin-top:7px"
+>
+進化・合成前のB1が判明している場合に使用します。
+固定値の合計が10であることも確認します。
+</div>
+
+</div>
+
+</div>
+
+</details>
+
+
+<!-- =========================
+     B2設定
+========================= -->
+
+<details id="b2Details">
+
+<summary>
+B2探索設定（進化・合成など）
+</summary>
+
+<div class="subbox">
+
+<label>
+B2の1能力あたり探索上限
+</label>
 
 <input
   id="b2max"
@@ -421,14 +794,18 @@ Aを固定して探索する
   value="3"
 >
 
-<div class="note" style="margin-top:7px">
+<div
+  class="note"
+  style="margin-top:7px"
+>
 未進化ではB2=0固定。
 進化・合成では0～指定値を各能力について探索します。
 現在の「3」は検証用の初期値であり、
-B2の正式なゲーム内上限として確定したものではありません。
+正式なゲーム内上限として確定したものではありません。
 </div>
 
 </div>
+
 </details>
 
 
@@ -439,22 +816,42 @@ B2の正式なゲーム内上限として確定したものではありません
 </section>
 
 
-<section class="card result" id="result">
+<!-- =========================
+     結果
+========================= -->
+
+<section
+  class="card result"
+  id="result"
+>
+
 5つの実測値を入力してください。
+
 </section>
 
 
 <section class="card note">
 
-<b>現在の判定ルール</b><br><br>
+<b>現在の判定ルール</b>
 
-B1は5能力の合計が10になる候補を探索します。<br>
+<br><br>
+
+B1は通常、
+5能力の合計が10になる候補を探索します。
+B1固定を使用した場合は、
+入力したB1だけで判定します。
+
+<br><br>
 
 B2は未進化個体では0固定です。
-進化・合成個体では指定した範囲から探索します。<br><br>
+進化・合成個体では指定した範囲から探索します。
+
+<br><br>
 
 Aはcalc.jsで確認できる種族別の対象能力制限を適用します。
-さらに、任意で暫定A合法フィルターを適用できます。<br><br>
+さらに任意で暫定A合法フィルターを適用できます。
+
+<br><br>
 
 候補が500件以下の場合は、
 残った全候補からA・B1・B2それぞれの範囲と
@@ -468,9 +865,23 @@ Aはcalc.jsで確認できる種族別の対象能力制限を適用します。
 <script>
 "use strict";
 
-const $=id=>document.getElementById(id);
 
-const STATUS=["H","A","M","D","S"];
+/* =========================
+   基本データ
+========================= */
+
+const $=
+  id=>document.getElementById(id);
+
+
+const STATUS=[
+  "H",
+  "A",
+  "M",
+  "D",
+  "S"
+];
+
 
 const STATUS_LABELS=[
   "HP",
@@ -479,6 +890,7 @@ const STATUS_LABELS=[
   "まもり",
   "すばやさ"
 ];
+
 
 const CLASS_NAMES=[
   "ボス",
@@ -492,6 +904,7 @@ const CLASS_NAMES=[
   "ニョロロン"
 ];
 
+
 const A_ALLOWED=[
   [false,false,false,false,false],
   [false,true,false,false,false],
@@ -504,59 +917,122 @@ const A_ALLOWED=[
   [true,false,false,false,false]
 ];
 
+
 const NATURES=[
-  ["なし",[0,0,0,0,0]],
-  ["手動入力",null],
-  ["短気",[10,10,0,0,0]],
-  ["荒くれ",[0,20,0,0,0]],
-  ["れいせい",[0,0,10,0,10]],
-  ["ずのう的",[0,0,20,0,0]],
-  ["しんちょう",[0,0,10,10,0]],
-  ["動じない",[0,0,0,20,0]],
-  ["やさしい",[10,0,10,0,0]],
-  ["情け深い",[20,0,0,0,0]],
-  ["いやらしい",[0,10,0,0,10]],
-  ["非道",[0,0,0,0,20]],
-  ["協力的",[10,0,0,0,10]],
-  ["けんしん的",[0,10,0,10,0]]
+
+  ["なし",
+    [0,0,0,0,0]
+  ],
+
+  ["手動入力",
+    null
+  ],
+
+  ["短気",
+    [10,10,0,0,0]
+  ],
+
+  ["荒くれ",
+    [0,20,0,0,0]
+  ],
+
+  ["れいせい",
+    [0,0,10,0,10]
+  ],
+
+  ["ずのう的",
+    [0,0,20,0,0]
+  ],
+
+  ["しんちょう",
+    [0,0,10,10,0]
+  ],
+
+  ["動じない",
+    [0,0,0,20,0]
+  ],
+
+  ["やさしい",
+    [10,0,10,0,0]
+  ],
+
+  ["情け深い",
+    [20,0,0,0,0]
+  ],
+
+  ["いやらしい",
+    [0,10,0,0,10]
+  ],
+
+  ["非道",
+    [0,0,0,0,20]
+  ],
+
+  ["協力的",
+    [10,0,0,0,10]
+  ],
+
+  ["けんしん的",
+    [0,10,0,10,0]
+  ]
+
 ];
 
 
 /* =========================
-   初期UI
+   UI初期化
 ========================= */
 
 for(const d of YOKAI_DATA){
 
-  const o=document.createElement("option");
+  const o=
+    document.createElement("option");
+
   o.value=d.num;
   o.textContent=d.name;
+
   $("yokai").appendChild(o);
 
-  const n=document.createElement("option");
+
+  const n=
+    document.createElement("option");
+
   n.value=d.name;
+
   $("yokaiNames").appendChild(n);
 
 }
 
-for(let i=0;i<NATURES.length;i++){
 
-  const o=document.createElement("option");
+for(
+  let i=0;
+  i<NATURES.length;
+  i++
+){
+
+  const o=
+    document.createElement("option");
+
   o.value=i;
   o.textContent=NATURES[i][0];
+
   $("nature").appendChild(o);
 
 }
 
+
 if(YOKAI_DATA.length){
 
   $("yokai").value=
-    String(YOKAI_DATA[0].num);
+    String(
+      YOKAI_DATA[0].num
+    );
 
   $("yokaiSearch").value=
     YOKAI_DATA[0].name;
 
 }
+
 
 $("nature").value="0";
 
@@ -571,28 +1047,40 @@ function syncYokaiSearch(){
     YOKAI_DATA.find(
       x=>
         x.num===
-        Number($("yokai").value)
+        Number(
+          $("yokai").value
+        )
     );
 
   if(d){
-    $("yokaiSearch").value=d.name;
+
+    $("yokaiSearch").value=
+      d.name;
+
   }
 
 }
+
 
 $("yokai").addEventListener(
   "change",
   syncYokaiSearch
 );
 
+
 $("yokaiSearch").addEventListener(
   "input",
   ()=>{
 
     const q=
-      $("yokaiSearch").value.trim();
+      $("yokaiSearch")
+        .value
+        .trim();
 
-    if(!q)return;
+    if(!q){
+      return;
+    }
+
 
     const exact=
       YOKAI_DATA.find(
@@ -600,6 +1088,7 @@ $("yokaiSearch").addEventListener(
           d.name===q ||
           d.furigana===q
       );
+
 
     if(exact){
 
@@ -610,12 +1099,15 @@ $("yokaiSearch").addEventListener(
 
     }
 
+
     const hit=
       YOKAI_DATA.find(
         d=>
           d.name.includes(q) ||
-          (d.furigana||"").includes(q)
+          (d.furigana||"")
+            .includes(q)
       );
+
 
     if(hit){
 
@@ -629,42 +1121,51 @@ $("yokaiSearch").addEventListener(
 
 
 /* =========================
-   UI切替
+   UI表示切替
 ========================= */
 
 function updateNatureUI(){
 
   const preset=
     NATURES[
-      Number($("nature").value)
+      Number(
+        $("nature").value
+      )
     ][1];
 
-  $("manualCb").classList.toggle(
-    "hidden",
-    preset!==null
-  );
+
+  $("manualCb")
+    .classList
+    .toggle(
+      "hidden",
+      preset!==null
+    );
 
 }
-
-$("nature").addEventListener(
-  "change",
-  updateNatureUI
-);
 
 
 function updateFixedAUI(){
 
-  $("fixedABox").classList.toggle(
-    "hidden",
-    !$("fixA").checked
-  );
+  $("fixedABox")
+    .classList
+    .toggle(
+      "hidden",
+      !$("fixA").checked
+    );
 
 }
 
-$("fixA").addEventListener(
-  "change",
-  updateFixedAUI
-);
+
+function updateFixedB1UI(){
+
+  $("fixedB1Box")
+    .classList
+    .toggle(
+      "hidden",
+      !$("fixB1").checked
+    );
+
+}
 
 
 function updateMethodUI(){
@@ -672,20 +1173,44 @@ function updateMethodUI(){
   const base=
     $("method").value==="base";
 
-  $("b2Details").classList.toggle(
-    "hidden",
-    base
-  );
+
+  $("b2Details")
+    .classList
+    .toggle(
+      "hidden",
+      base
+    );
 
 }
+
+
+$("nature").addEventListener(
+  "change",
+  updateNatureUI
+);
+
+
+$("fixA").addEventListener(
+  "change",
+  updateFixedAUI
+);
+
+
+$("fixB1").addEventListener(
+  "change",
+  updateFixedB1UI
+);
+
 
 $("method").addEventListener(
   "change",
   updateMethodUI
 );
 
+
 updateNatureUI();
 updateFixedAUI();
+updateFixedB1UI();
 updateMethodUI();
 
 
@@ -694,6 +1219,7 @@ updateMethodUI();
 ========================= */
 
 const f32=Math.fround;
+
 
 function calcStatus(
   growPattern,
@@ -708,29 +1234,65 @@ function calcStatus(
 
   const F=[];
 
+
   F[0]=f32(1.0);
+
   F[1]=f32(9604.0);
-  F[2]=f32(0.449999988079071044921875);
+
+  F[2]=f32(
+    0.449999988079071044921875
+  );
+
   F[3]=f32(0.25);
-  F[4]=f32(0.010204081423580646514892578125);
+
+  F[4]=f32(
+    0.010204081423580646514892578125
+  );
+
   F[5]=f32(98.0);
-  F[6]=f32(0.100000001490116119384765625);
+
+  F[6]=f32(
+    0.100000001490116119384765625
+  );
+
   F[7]=f32(99.0);
+
   F[8]=f32(0.5);
-  F[9]=f32(0.0050505050458014011383056640625);
-  F[10]=f32(0.0500000007450580596923828125);
+
+  F[9]=f32(
+    0.0050505050458014011383056640625
+  );
+
+  F[10]=f32(
+    0.0500000007450580596923828125
+  );
+
 
   F[11]=f32(level);
-  F[11]=f32(F[11]*F[9]);
-  F[11]=f32(F[11]+F[0]);
-  F[11]=f32(F[11]*cb);
-  F[23]=f32(F[11]);
+
+  F[11]=f32(
+    F[11]*F[9]
+  );
+
+  F[11]=f32(
+    F[11]+F[0]
+  );
+
+  F[11]=f32(
+    F[11]*cb
+  );
+
+  F[23]=f32(
+    F[11]
+  );
+
 
   F[11]=f32(
     bs+
     ivA+
     ivB1
   );
+
 
   if(isHP){
 
@@ -741,14 +1303,17 @@ function calcStatus(
   }else{
 
     F[23]=f32(
-      F[23]+bs*F[6]
+      F[23]+
+      bs*F[6]
     );
 
   }
 
+
   F[11]=f32(
     F[11]+ivB2
   );
+
 
   if(isHP){
 
@@ -775,7 +1340,10 @@ function calcStatus(
       F[23]+F[11]
     );
 
-  }else if(growPattern===1){
+  }
+
+
+  else if(growPattern===1){
 
     F[12]=f32(
       level-F[0]
@@ -785,108 +1353,212 @@ function calcStatus(
       F[5]-F[12]
     );
 
+
     F[13]=f32(
+
       F[7]-(
-        F[12]*F[12]*F[12]*F[8]/F[1]+
-        F[12]*F[12]*F[3]*F[4]+
-        F[12]*F[3]
+
+        F[12]*
+        F[12]*
+        F[12]*
+        F[8]/
+        F[1]
+
+        +
+
+        F[12]*
+        F[12]*
+        F[3]*
+        F[4]
+
+        +
+
+        F[12]*
+        F[3]
+
       )
+
     );
+
 
     F[11]=f32(
       F[11]*F[13]
     );
 
+
     F[23]=f32(
       F[23]+F[11]
     );
 
-  }else if(growPattern===2){
+  }
+
+
+  else if(growPattern===2){
 
     F[12]=f32(
       level-F[0]
     );
+
 
     F[12]=f32(
       F[5]-F[12]
     );
 
+
     F[13]=f32(
+
       F[7]-(
-        F[12]*F[12]*F[12]*F[6]/F[1]+
-        F[12]*F[12]*F[2]*F[4]+
-        F[12]*F[2]
+
+        F[12]*
+        F[12]*
+        F[12]*
+        F[6]/
+        F[1]
+
+        +
+
+        F[12]*
+        F[12]*
+        F[2]*
+        F[4]
+
+        +
+
+        F[12]*
+        F[2]
+
       )
+
     );
+
 
     F[11]=f32(
       F[11]*F[13]
     );
 
+
     F[23]=f32(
       F[23]+F[11]
     );
 
-  }else if(growPattern===3){
+  }
+
+
+  else if(growPattern===3){
 
     F[12]=f32(
       level-F[0]
     );
 
+
     F[13]=f32(
+
       F[0]+(
-        F[12]*F[12]*F[12]*F[6]/F[1]+
-        F[12]*F[12]*F[2]*F[4]+
-        F[12]*F[2]
+
+        F[12]*
+        F[12]*
+        F[12]*
+        F[6]/
+        F[1]
+
+        +
+
+        F[12]*
+        F[12]*
+        F[2]*
+        F[4]
+
+        +
+
+        F[12]*
+        F[2]
+
       )
+
     );
+
 
     F[11]=f32(
       F[11]*F[13]
     );
 
+
     F[23]=f32(
       F[23]+F[11]
     );
 
-  }else if(growPattern===4){
+  }
+
+
+  else if(growPattern===4){
 
     F[12]=f32(
       level-F[0]
     );
 
+
     F[13]=f32(
+
       F[0]+(
-        F[12]*F[12]*F[12]*F[8]/F[1]+
-        F[12]*F[12]*F[3]*F[4]+
-        F[12]*F[3]
+
+        F[12]*
+        F[12]*
+        F[12]*
+        F[8]/
+        F[1]
+
+        +
+
+        F[12]*
+        F[12]*
+        F[3]*
+        F[4]
+
+        +
+
+        F[12]*
+        F[3]
+
       )
+
     );
+
 
     F[11]=f32(
       F[11]*F[13]
     );
 
+
     F[23]=f32(
       F[23]+F[11]
     );
 
-  }else if(growPattern===5){
+  }
+
+
+  else if(growPattern===5){
 
     F[23]=f32(bs);
 
-  }else{
+  }
+
+
+  else{
 
     return 0;
 
   }
 
-  return Math.floor(F[23]);
+
+  return Math.floor(
+    F[23]
+  );
+
 }
 
 
 /* =========================
-   A候補
+   A探索値
 ========================= */
 
 function getAValues(
@@ -902,11 +1574,15 @@ function getAValues(
 
   }
 
-  if(!A_ALLOWED[d.class][statIndex]){
+
+  if(
+    !A_ALLOWED[d.class][statIndex]
+  ){
 
     return [0];
 
   }
+
 
   if(!useLegalA){
 
@@ -917,15 +1593,18 @@ function getAValues(
 
   }
 
+
   const allowedCount=
     A_ALLOWED[d.class]
       .filter(Boolean)
       .length;
 
+
   const maxA=
     allowedCount>=2
-      ? 4
-      : 8;
+      ?4
+      :8;
+
 
   return Array.from(
     {length:maxA+1},
@@ -948,10 +1627,12 @@ function statCandidates(
   b2max,
   baseOnly,
   useLegalA,
-  fixedA
+  fixedA,
+  fixedB1
 ){
 
   const arr=[];
+
 
   const aVals=
     getAValues(
@@ -961,26 +1642,43 @@ function statCandidates(
       fixedA
     );
 
+
+  const b1Vals=
+    fixedB1!==null
+      ?[fixedB1]
+      :Array.from(
+          {length:11},
+          (_,x)=>x
+        );
+
+
   const b2Vals=
     baseOnly
-      ? [0]
-      : Array.from(
+      ?[0]
+      :Array.from(
           {length:b2max+1},
           (_,x)=>x
         );
 
+
   for(const a of aVals){
+
 
     if(
       !A_ALLOWED[d.class][i] &&
       a!==0
     ){
+
       continue;
+
     }
 
-    for(let b1=0;b1<=10;b1++){
+
+    for(const b1 of b1Vals){
+
 
       for(const b2 of b2Vals){
+
 
         const value=
           calcStatus(
@@ -993,6 +1691,7 @@ function statCandidates(
             lv,
             i===0
           );
+
 
         if(value===target){
 
@@ -1010,12 +1709,14 @@ function statCandidates(
 
   }
 
+
   return arr;
+
 }
 
 
 /* =========================
-   5能力を結合
+   5能力結合
 ========================= */
 
 function combine(
@@ -1024,59 +1725,90 @@ function combine(
 ){
 
   const out=[];
-  const cur=Array(5);
+
+  const cur=
+    Array(5);
+
 
   function rec(
     i,
     sumB1
   ){
 
-    if(out.length>=limit){
+
+    if(
+      out.length>=limit
+    ){
+
       return;
+
     }
 
+
     if(i===5){
+
 
       if(sumB1===10){
 
         out.push(
+
           cur.map(
             x=>({...x})
           )
+
         );
 
       }
 
+
       return;
+
     }
 
-    for(const c of perStat[i]){
+
+    for(
+      const c of perStat[i]
+    ){
+
 
       const next=
         sumB1+c.b1;
 
+
       if(next>10){
+
         continue;
+
       }
 
+
       cur[i]=c;
+
 
       rec(
         i+1,
         next
       );
 
-      if(out.length>=limit){
+
+      if(
+        out.length>=limit
+      ){
+
         return;
+
       }
 
     }
 
   }
 
+
   rec(0,0);
 
+
   return out;
+
 }
 
 
@@ -1084,11 +1816,16 @@ function combine(
    候補統計
 ========================= */
 
-function candidateStats(matches){
+function candidateStats(
+  matches
+){
 
   if(!matches.length){
+
     return "";
+
   }
+
 
   function rangeOf(
     key,
@@ -1100,40 +1837,55 @@ function candidateStats(matches){
         m=>m[i][key]
       );
 
+
     const min=
       Math.min(...vals);
+
 
     const max=
       Math.max(...vals);
 
+
     return min===max
-      ? `<span class="fixed">${min}</span>`
-      : `${min}～${max}`;
+
+      ?`<span class="fixed">${min}</span>`
+
+      :`${min}～${max}`;
 
   }
 
 
-  function totalRange(key){
+  function totalRange(
+    key
+  ){
 
     const totals=
       matches.map(
+
         m=>
+
           m.reduce(
             (sum,x)=>
               sum+x[key],
             0
           )
+
       );
+
 
     const min=
       Math.min(...totals);
 
+
     const max=
       Math.max(...totals);
 
+
     return min===max
-      ? `<span class="fixed">${min}</span>`
-      : `${min}～${max}`;
+
+      ?`<span class="fixed">${min}</span>`
+
+      :`${min}～${max}`;
 
   }
 
@@ -1142,56 +1894,65 @@ function candidateStats(matches){
 
   <div class="subbox">
 
-    <div class="section-title">
-      候補から分かる範囲
-    </div>
+  <div class="section-title">
+  候補から分かる範囲
+  </div>
 
-    <div class="note">
-      現在残っている全候補を比較しています。
-      1つの数字だけ表示される項目は、
-      全候補でその値が共通です。
-    </div>
+  <div class="note">
+  現在残っている全候補を比較しています。
+  1つの数字だけ表示される項目は、
+  全候補でその値が共通です。
+  </div>
 
-    <div style="overflow-x:auto">
+  <div style="overflow-x:auto">
 
-    <table class="stat-table">
+  <table class="stat-table">
 
-      <thead>
-        <tr>
-          <th></th>
-          <th>A</th>
-          <th>B1</th>
-          <th>B2</th>
-        </tr>
-      </thead>
+  <thead>
 
-      <tbody>
+  <tr>
+
+  <th></th>
+  <th>A</th>
+  <th>B1</th>
+  <th>B2</th>
+
+  </tr>
+
+  </thead>
+
+  <tbody>
+
   `;
 
 
-  for(let i=0;i<5;i++){
+  for(
+    let i=0;
+    i<5;
+    i++
+  ){
 
     h+=`
 
-      <tr>
+    <tr>
 
-        <td>
-          ${STATUS_LABELS[i]}
-        </td>
+    <td>
+    ${STATUS_LABELS[i]}
+    </td>
 
-        <td>
-          ${rangeOf("a",i)}
-        </td>
+    <td>
+    ${rangeOf("a",i)}
+    </td>
 
-        <td>
-          ${rangeOf("b1",i)}
-        </td>
+    <td>
+    ${rangeOf("b1",i)}
+    </td>
 
-        <td>
-          ${rangeOf("b2",i)}
-        </td>
+    <td>
+    ${rangeOf("b2",i)}
+    </td>
 
-      </tr>
+    </tr>
 
     `;
 
@@ -1200,34 +1961,38 @@ function candidateStats(matches){
 
   h+=`
 
-      </tbody>
+  </tbody>
 
-    </table>
+  </table>
 
-    </div>
+  </div>
 
-    <hr>
+  <hr>
 
-    <div class="code">
+  <div class="code">
 
-      A合計&nbsp;&nbsp;：
-      ${totalRange("a")}
-      <br>
+  A合計&nbsp;&nbsp;：
+  ${totalRange("a")}
 
-      B1合計 ：
-      ${totalRange("b1")}
-      <br>
+  <br>
 
-      B2合計 ：
-      ${totalRange("b2")}
+  B1合計 ：
+  ${totalRange("b1")}
 
-    </div>
+  <br>
+
+  B2合計 ：
+  ${totalRange("b2")}
+
+  </div>
 
   </div>
 
   `;
 
+
   return h;
+
 }
 
 
@@ -1239,11 +2004,14 @@ $("judge").addEventListener(
   "click",
   ()=>{
 
+
     const d=
       YOKAI_DATA.find(
         x=>
           x.num===
-          Number($("yokai").value)
+          Number(
+            $("yokai").value
+          )
       );
 
 
@@ -1256,7 +2024,9 @@ $("judge").addEventListener(
     const targets=
       STATUS.map(
         s=>
-          Number($(s).value)
+          Number(
+            $(s).value
+          )
       );
 
 
@@ -1274,6 +2044,7 @@ $("judge").addEventListener(
 
     const cb=
       preset ??
+
       STATUS.map(
         x=>
           Number(
@@ -1288,8 +2059,8 @@ $("judge").addEventListener(
 
     const b2max=
       baseOnly
-        ? 0
-        : Math.max(
+        ?0
+        :Math.max(
             0,
             Math.min(
               99,
@@ -1308,28 +2079,53 @@ $("judge").addEventListener(
       $("fixA").checked;
 
 
+    const useFixedB1=
+      $("fixB1").checked;
+
+
     const fixedA=
       useFixedA
-        ? STATUS.map(
+
+        ?STATUS.map(
             x=>
               Number(
                 $("fixA"+x).value
               )||0
           )
-        : null;
+
+        :null;
+
+
+    const fixedB1=
+      useFixedB1
+
+        ?STATUS.map(
+            x=>
+              Number(
+                $("fixB1"+x).value
+              )||0
+          )
+
+        :null;
 
 
     const res=
       $("result");
 
 
-    /* 入力チェック */
+    /* -------------------------
+       基本入力チェック
+    ------------------------- */
 
     if(
       !d ||
+
       !Number.isInteger(lv) ||
+
       lv<1 ||
+
       lv>99 ||
+
       targets.some(
         x=>
           !Number.isFinite(x) ||
@@ -1338,6 +2134,7 @@ $("judge").addEventListener(
     ){
 
       res.innerHTML=
+
         `<span class="warn">
         妖怪・Lv・5つの実測値を確認してください。
         </span>`;
@@ -1347,11 +2144,19 @@ $("judge").addEventListener(
     }
 
 
-    /* A固定チェック */
+    /* -------------------------
+       A固定チェック
+    ------------------------- */
 
     if(useFixedA){
 
-      for(let i=0;i<5;i++){
+
+      for(
+        let i=0;
+        i<5;
+        i++
+      ){
+
 
         if(
           !A_ALLOWED[d.class][i] &&
@@ -1359,10 +2164,32 @@ $("judge").addEventListener(
         ){
 
           res.innerHTML=
+
             `<span class="warn">
+
             ${d.name}では
             ${STATUS_LABELS[i]}
             にAを設定できません。
+
+            </span>`;
+
+          return;
+
+        }
+
+
+        if(
+          !Number.isInteger(
+            fixedA[i]
+          ) ||
+
+          fixedA[i]<0
+        ){
+
+          res.innerHTML=
+
+            `<span class="warn">
+            A固定値を確認してください。
             </span>`;
 
           return;
@@ -1374,26 +2201,103 @@ $("judge").addEventListener(
     }
 
 
-    /* 各能力の候補 */
+    /* -------------------------
+       B1固定チェック
+    ------------------------- */
+
+    if(useFixedB1){
+
+
+      const sumFixedB1=
+        fixedB1.reduce(
+          (a,b)=>a+b,
+          0
+        );
+
+
+      if(
+        fixedB1.some(
+          x=>
+            !Number.isInteger(x) ||
+            x<0 ||
+            x>10
+        )
+      ){
+
+        res.innerHTML=
+
+          `<span class="warn">
+          B1固定値は各能力0～10で入力してください。
+          </span>`;
+
+        return;
+
+      }
+
+
+      if(
+        sumFixedB1!==10
+      ){
+
+        res.innerHTML=
+
+          `<span class="warn">
+          B1固定値の合計が
+          ${sumFixedB1}
+          になっています。
+          B1合計は10になるよう入力してください。
+          </span>`;
+
+        return;
+
+      }
+
+    }
+
+
+    /* -------------------------
+       各能力候補
+    ------------------------- */
 
     const per=
       targets.map(
+
         (target,i)=>
+
           statCandidates(
+
             d,
+
             i,
+
             target,
+
             cb[i],
+
             lv,
+
             b2max,
+
             baseOnly,
+
             useLegalA,
+
             useFixedA
-              ? fixedA[i]
-              : null
+              ?fixedA[i]
+              :null,
+
+            useFixedB1
+              ?fixedB1[i]
+              :null
+
           )
+
       );
 
+
+    /* -------------------------
+       1能力でも候補0
+    ------------------------- */
 
     if(
       per.some(
@@ -1406,6 +2310,7 @@ $("judge").addEventListener(
         `<b>
         ${d.name} / Lv${lv}
         </b>
+
         <br>
 
         <span class="warn">
@@ -1415,8 +2320,10 @@ $("judge").addEventListener(
         <br>
 
         <span class="note">
+
         現在のA・B1・B2・性格補正条件では、
-        少なくとも1能力に一致する候補がありません。
+        少なくとも1能力を再現できません。
+
         </span>`;
 
       return;
@@ -1424,10 +2331,9 @@ $("judge").addEventListener(
     }
 
 
-    /*
-      501件取得して
-      500件超か判定
-    */
+    /* -------------------------
+       5能力結合
+    ------------------------- */
 
     const matches=
       combine(
@@ -1447,6 +2353,10 @@ $("judge").addEventListener(
       );
 
 
+    /* -------------------------
+       結果ヘッダー
+    ------------------------- */
+
     let h=
 
       `<b>
@@ -1458,17 +2368,20 @@ $("judge").addEventListener(
       </span>
 
       <span class="pill">
+
       ${
         baseOnly
           ?"B2 0固定"
           :"B2 0～"+b2max
       }
+
       </span>`;
 
 
     if(useLegalA){
 
       h+=
+
         `<span class="pill">
         暫定AフィルターON
         </span>`;
@@ -1479,8 +2392,20 @@ $("judge").addEventListener(
     if(useFixedA){
 
       h+=
+
         `<span class="pill">
         A固定
+        </span>`;
+
+    }
+
+
+    if(useFixedB1){
+
+      h+=
+
+        `<span class="pill">
+        B1固定
         </span>`;
 
     }
@@ -1489,7 +2414,13 @@ $("judge").addEventListener(
     h+="<br>";
 
 
-    if(!shownMatches.length){
+    /* -------------------------
+       候補0
+    ------------------------- */
+
+    if(
+      !shownMatches.length
+    ){
 
       h+=
 
@@ -1504,69 +2435,94 @@ $("judge").addEventListener(
     }
 
 
+    /* -------------------------
+       候補数
+    ------------------------- */
+
     h+=
 
       `<span class="good">
+
       ${
         over500
           ?"500件超"
           :shownMatches.length+"候補"
       }
+
       </span>`;
 
+
+    /* -------------------------
+       統計
+    ------------------------- */
 
     if(over500){
 
       h+=
 
         `<div class="note">
+
         候補が500件を超えています。
         条件を追加すると絞り込みやすくなります。
+
         </div>
 
+
         <div class="subbox note">
+
         すべての候補を取得できていないため、
         候補統計は表示していません。
+
         500件以下になると自動表示されます。
+
         </div>`;
-
-    }else{
-
-      h+=
-
-        `<div class="note">
-        現在の条件をすべて満たす候補です。
-        </div>`;
-
-      /*
-        全候補を使って統計
-      */
-
-      h+=candidateStats(
-        shownMatches
-      );
 
     }
 
 
-    /*
-      候補詳細は100件まで表示
-    */
+    else{
+
+      h+=
+
+        `<div class="note">
+
+        現在の条件をすべて満たす候補です。
+
+        </div>`;
+
+
+      h+=
+        candidateStats(
+          shownMatches
+        );
+
+    }
+
+
+    /* -------------------------
+       候補詳細
+    ------------------------- */
 
     shownMatches
-      .slice(0,100)
+      .slice(
+        0,
+        100
+      )
       .forEach(
         (m,k)=>{
+
 
           const avec=
             m.map(
               x=>x.a
             );
 
+
           const b1vec=
             m.map(
               x=>x.b1
             );
+
 
           const b2vec=
             m.map(
@@ -1634,14 +2590,20 @@ $("judge").addEventListener(
       );
 
 
-    if(shownMatches.length>100){
+    if(
+      shownMatches.length>100
+    ){
 
       h+=
 
         `<div class="note">
+
         候補詳細の表示は先頭100件までです。
-        統計には500件以下の場合、
-        表示されていない候補も含めた全候補を使用しています。
+
+        統計には、
+        500件以下の場合は表示されていない候補も含めた
+        全候補を使用しています。
+
         </div>`;
 
     }
@@ -1655,5 +2617,6 @@ $("judge").addEventListener(
 </script>
 
 </main>
+
 </body>
 </html>
